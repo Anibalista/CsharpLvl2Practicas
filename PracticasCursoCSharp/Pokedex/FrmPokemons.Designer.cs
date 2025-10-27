@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmPokemons));
             this.dataGridPokemons = new System.Windows.Forms.DataGridView();
             this.picBoxPokemon = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridPokemons)).BeginInit();
@@ -43,9 +44,11 @@
             this.dataGridPokemons.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridPokemons.Size = new System.Drawing.Size(508, 426);
             this.dataGridPokemons.TabIndex = 0;
+            this.dataGridPokemons.SelectionChanged += new System.EventHandler(this.dataGridPokemons_SelectionChanged);
             // 
             // picBoxPokemon
             // 
+            this.picBoxPokemon.InitialImage = ((System.Drawing.Image)(resources.GetObject("picBoxPokemon.InitialImage")));
             this.picBoxPokemon.Location = new System.Drawing.Point(526, 12);
             this.picBoxPokemon.Name = "picBoxPokemon";
             this.picBoxPokemon.Size = new System.Drawing.Size(262, 212);
