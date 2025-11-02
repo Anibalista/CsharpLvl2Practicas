@@ -1,11 +1,17 @@
-﻿using DominioPokedex;
-using NegocioPokedex;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using DominioPokedex;
+using NegocioPokedex;
 
-namespace Pokedex
+namespace FrontPokedex
 {
     public partial class FrmPokemons : Form
     {
@@ -34,9 +40,11 @@ namespace Pokedex
             try
             {
                 if (String.IsNullOrWhiteSpace(pokemon.UrlImagen))
-                    return "imagenes/quien_es_este_pokeon.png";
+                    return "imagenes/quien_es_este_pokemon.png";
 
                 string ruta = pokemon.UrlImagen;
+                if (ruta.StartsWith("http"))
+                    return ruta;
 
                 // Validar si el archivo existe
                 string rutaCompleta = Path.Combine(Application.StartupPath, ruta);
@@ -63,13 +71,13 @@ namespace Pokedex
                 else
                 {
                     picBoxPokemon.Load(ObtenerUrlSeleccionada(listaPokemons[0]));
+
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
-                picBoxPokemon.Image = null;
-
+                //picBoxPokemon.Image = null;
             }
         }
     }

@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{246F5299-70BB-46EE-9326-39AF3170CFD0}</ProjectGuid>
+    <ProjectGuid>{4A85DFF6-43BC-4539-8894-7385A7AFCFBD}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Pokedex</RootNamespace>
-    <AssemblyName>Pokedex</AssemblyName>
+    <RootNamespace>FrontPokedex</RootNamespace>
+    <AssemblyName>FrontPokedex</AssemblyName>
     <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -52,6 +52,7 @@
     <Compile Include="FrmPokemons.Designer.cs">
       <DependentUpon>FrmPokemons.cs</DependentUpon>
     </Compile>
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FrmPokemons.resx">
       <DependentUpon>FrmPokemons.cs</DependentUpon>
@@ -78,8 +79,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Content Include="imagenes\quien_es_este_pokeon.png">
+    <Content Include="imagenes\quien_es_este_pokemon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

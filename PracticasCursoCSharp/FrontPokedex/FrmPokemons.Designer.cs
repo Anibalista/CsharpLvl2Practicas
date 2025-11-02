@@ -1,4 +1,4 @@
-﻿namespace Pokedex
+﻿namespace FrontPokedex
 {
     partial class FrmPokemons
     {
@@ -41,31 +41,31 @@
             this.dataGridPokemons.Location = new System.Drawing.Point(12, 12);
             this.dataGridPokemons.Name = "dataGridPokemons";
             this.dataGridPokemons.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridPokemons.Size = new System.Drawing.Size(539, 426);
-            this.dataGridPokemons.TabIndex = 0;
+            this.dataGridPokemons.Size = new System.Drawing.Size(590, 426);
+            this.dataGridPokemons.TabIndex = 1;
             this.dataGridPokemons.SelectionChanged += new System.EventHandler(this.dataGridPokemons_SelectionChanged);
             // 
             // picBoxPokemon
             // 
-            this.picBoxPokemon.InitialImage = null;
-            this.picBoxPokemon.Location = new System.Drawing.Point(557, 12);
+            this.picBoxPokemon.Location = new System.Drawing.Point(608, 12);
             this.picBoxPokemon.Name = "picBoxPokemon";
-            this.picBoxPokemon.Size = new System.Drawing.Size(262, 212);
+            this.picBoxPokemon.Size = new System.Drawing.Size(277, 225);
             this.picBoxPokemon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.picBoxPokemon.TabIndex = 1;
+            this.picBoxPokemon.TabIndex = 2;
             this.picBoxPokemon.TabStop = false;
             // 
             // FrmPokemons
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(822, 454);
+            this.ClientSize = new System.Drawing.Size(888, 462);
             this.Controls.Add(this.picBoxPokemon);
             this.Controls.Add(this.dataGridPokemons);
-            this.MinimumSize = new System.Drawing.Size(838, 493);
+            this.MaximizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(904, 501);
             this.Name = "FrmPokemons";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Ver Pokemons";
+            this.Text = "Pokedex";
             this.Load += new System.EventHandler(this.FrmPokemons_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridPokemons)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picBoxPokemon)).EndInit();
