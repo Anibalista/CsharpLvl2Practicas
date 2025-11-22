@@ -46,14 +46,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FrmEditPokemon.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmEditPokemon.Designer.cs">
+      <DependentUpon>FrmEditPokemon.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmPokemons.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FrmPokemons.Designer.cs">
       <DependentUpon>FrmPokemons.cs</DependentUpon>
     </Compile>
+    <Compile Include="HelperImagenes.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="FrmEditPokemon.resx">
+      <DependentUpon>FrmEditPokemon.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FrmPokemons.resx">
       <DependentUpon>FrmPokemons.cs</DependentUpon>
     </EmbeddedResource>
@@ -66,6 +76,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="Properties\DataSources\DominioPokedex.Elemento.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
