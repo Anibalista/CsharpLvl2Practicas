@@ -38,6 +38,13 @@
             this.checkEliminados = new System.Windows.Forms.CheckBox();
             this.txtFiltroRapido = new System.Windows.Forms.TextBox();
             this.btnFiltro = new System.Windows.Forms.Button();
+            this.lblCampo = new System.Windows.Forms.Label();
+            this.txtFiltroAvanzado = new System.Windows.Forms.TextBox();
+            this.cbCampos = new System.Windows.Forms.ComboBox();
+            this.cbCriterios = new System.Windows.Forms.ComboBox();
+            this.lblCriterio = new System.Windows.Forms.Label();
+            this.lvlValor = new System.Windows.Forms.Label();
+            this.lblFiltroRapido = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridPokemons)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picBoxPokemon)).BeginInit();
             this.SuspendLayout();
@@ -129,7 +136,7 @@
             // checkEliminados
             // 
             this.checkEliminados.AutoSize = true;
-            this.checkEliminados.Location = new System.Drawing.Point(581, 18);
+            this.checkEliminados.Location = new System.Drawing.Point(556, 18);
             this.checkEliminados.Name = "checkEliminados";
             this.checkEliminados.Size = new System.Drawing.Size(114, 17);
             this.checkEliminados.TabIndex = 6;
@@ -140,25 +147,102 @@
             // txtFiltroRapido
             // 
             this.txtFiltroRapido.Font = new System.Drawing.Font("Roboto Condensed", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtFiltroRapido.Location = new System.Drawing.Point(12, 12);
+            this.txtFiltroRapido.Location = new System.Drawing.Point(93, 12);
             this.txtFiltroRapido.Name = "txtFiltroRapido";
             this.txtFiltroRapido.Size = new System.Drawing.Size(445, 27);
             this.txtFiltroRapido.TabIndex = 7;
+            this.txtFiltroRapido.TextChanged += new System.EventHandler(this.txtFiltroRapido_TextChanged);
             // 
             // btnFiltro
             // 
-            this.btnFiltro.Location = new System.Drawing.Point(463, 12);
+            this.btnFiltro.Enabled = false;
+            this.btnFiltro.Location = new System.Drawing.Point(775, 111);
             this.btnFiltro.Name = "btnFiltro";
-            this.btnFiltro.Size = new System.Drawing.Size(112, 27);
+            this.btnFiltro.Size = new System.Drawing.Size(273, 44);
             this.btnFiltro.TabIndex = 8;
-            this.btnFiltro.Text = "Buscar BD";
+            this.btnFiltro.Text = "Filtrar Pokemons";
             this.btnFiltro.UseVisualStyleBackColor = true;
+            this.btnFiltro.Click += new System.EventHandler(this.btnFiltro_Click);
+            // 
+            // lblCampo
+            // 
+            this.lblCampo.AutoSize = true;
+            this.lblCampo.Location = new System.Drawing.Point(724, 19);
+            this.lblCampo.Name = "lblCampo";
+            this.lblCampo.Size = new System.Drawing.Size(46, 13);
+            this.lblCampo.TabIndex = 9;
+            this.lblCampo.Text = "Campo: ";
+            // 
+            // txtFiltroAvanzado
+            // 
+            this.txtFiltroAvanzado.Font = new System.Drawing.Font("Roboto Condensed", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtFiltroAvanzado.Location = new System.Drawing.Point(775, 78);
+            this.txtFiltroAvanzado.Name = "txtFiltroAvanzado";
+            this.txtFiltroAvanzado.Size = new System.Drawing.Size(273, 27);
+            this.txtFiltroAvanzado.TabIndex = 10;
+            // 
+            // cbCampos
+            // 
+            this.cbCampos.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbCampos.Font = new System.Drawing.Font("Roboto Condensed", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbCampos.FormattingEnabled = true;
+            this.cbCampos.Location = new System.Drawing.Point(775, 12);
+            this.cbCampos.Name = "cbCampos";
+            this.cbCampos.Size = new System.Drawing.Size(273, 27);
+            this.cbCampos.TabIndex = 11;
+            this.cbCampos.SelectedIndexChanged += new System.EventHandler(this.cbCampos_SelectedIndexChanged);
+            // 
+            // cbCriterios
+            // 
+            this.cbCriterios.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbCriterios.Enabled = false;
+            this.cbCriterios.Font = new System.Drawing.Font("Roboto Condensed", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbCriterios.FormattingEnabled = true;
+            this.cbCriterios.Location = new System.Drawing.Point(775, 45);
+            this.cbCriterios.Name = "cbCriterios";
+            this.cbCriterios.Size = new System.Drawing.Size(273, 27);
+            this.cbCriterios.TabIndex = 13;
+            this.cbCriterios.SelectedIndexChanged += new System.EventHandler(this.cbCriterios_SelectedIndexChanged);
+            // 
+            // lblCriterio
+            // 
+            this.lblCriterio.AutoSize = true;
+            this.lblCriterio.Location = new System.Drawing.Point(724, 52);
+            this.lblCriterio.Name = "lblCriterio";
+            this.lblCriterio.Size = new System.Drawing.Size(45, 13);
+            this.lblCriterio.TabIndex = 12;
+            this.lblCriterio.Text = "Criterio: ";
+            // 
+            // lvlValor
+            // 
+            this.lvlValor.AutoSize = true;
+            this.lvlValor.Location = new System.Drawing.Point(732, 85);
+            this.lvlValor.Name = "lvlValor";
+            this.lvlValor.Size = new System.Drawing.Size(37, 13);
+            this.lvlValor.TabIndex = 14;
+            this.lvlValor.Text = "Valor: ";
+            // 
+            // lblFiltroRapido
+            // 
+            this.lblFiltroRapido.AutoSize = true;
+            this.lblFiltroRapido.Location = new System.Drawing.Point(15, 19);
+            this.lblFiltroRapido.Name = "lblFiltroRapido";
+            this.lblFiltroRapido.Size = new System.Drawing.Size(72, 13);
+            this.lblFiltroRapido.TabIndex = 15;
+            this.lblFiltroRapido.Text = "Filtro Rápido: ";
             // 
             // FrmPokemons
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1060, 558);
+            this.Controls.Add(this.lblFiltroRapido);
+            this.Controls.Add(this.lvlValor);
+            this.Controls.Add(this.cbCriterios);
+            this.Controls.Add(this.lblCriterio);
+            this.Controls.Add(this.cbCampos);
+            this.Controls.Add(this.txtFiltroAvanzado);
+            this.Controls.Add(this.lblCampo);
             this.Controls.Add(this.btnFiltro);
             this.Controls.Add(this.txtFiltroRapido);
             this.Controls.Add(this.checkEliminados);
@@ -194,6 +278,13 @@
         private System.Windows.Forms.CheckBox checkEliminados;
         private System.Windows.Forms.TextBox txtFiltroRapido;
         private System.Windows.Forms.Button btnFiltro;
+        private System.Windows.Forms.Label lblCampo;
+        private System.Windows.Forms.TextBox txtFiltroAvanzado;
+        private System.Windows.Forms.ComboBox cbCampos;
+        private System.Windows.Forms.ComboBox cbCriterios;
+        private System.Windows.Forms.Label lblCriterio;
+        private System.Windows.Forms.Label lvlValor;
+        private System.Windows.Forms.Label lblFiltroRapido;
     }
 }
 

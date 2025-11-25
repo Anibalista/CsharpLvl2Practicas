@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DominioPokedex;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,10 +10,12 @@ namespace FrontPokedex
 {
     public static class HelperImagenes
     {
-        public static string ObtenerUrlSeleccionada(string urlImagen)
+        public static string ObtenerUrlSeleccionada(Pokemon pokemon)
         {
+
             try
             {
+                string urlImagen = pokemon?.UrlImagen;
                 if (String.IsNullOrWhiteSpace(urlImagen))
                     return "imagenes/quien_es_este_pokemon.png";
 

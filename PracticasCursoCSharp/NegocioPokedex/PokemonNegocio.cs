@@ -53,6 +53,83 @@ namespace NegocioPokedex
             }
         }
 
+        public List<Pokemon> Filtrar(string campo, string criterio, string filtro, bool inactivos)
+        {
+            List<Pokemon> lista = new List<Pokemon>();
+            AccesoDatos datos = new AccesoDatos();
+            int filtroActivo = inactivos ? -1 : 0;
+            string tabla = "p.";
+            if (campo == "Tipo")
+            {
+                tabla = "t.";
+                campo = "Descripcion";
+            }  
+            if (campo == "Debilidad")
+            {
+                tabla = "d.";
+                campo = "Descripcion";
+            }
+                
+            campo = tabla + campo;
+            try
+            {
+                string consulta = $"select p.Id, p.Numero, p.Nombre, p.Descripcion, p.UrlImagen, IdDebilidad, IdTipo, t.Descripcion as Tipo, d.Descripcion as Debilidad, p.Activo from POKEMONS p join ELEMENTOS t on p.IdTipo = t.Id join ELEMENTOS d on p.IdDebilidad = d.Id where Activo > {filtroActivo} and ";
+                
+                
+                switch (criterio)
+                {
+                    case "Mayor a":
+                        consulta += $"{campo} > {filtro}";
+                        break;
+                    case "Menor a":
+                        consulta += $"{campo} < {filtro}";
+                        break;
+                    case "Igual a":
+                        consulta += $"{campo} = {filtro}";
+                        break;
+                    case "Comienza con":
+                        consulta += $"{campo} like '{filtro}%'";
+                        break;
+                    case "Termina con":
+                        consulta += $"{campo} like '%{filtro}'";
+                        break;
+                    case "Contiene":
+                        consulta += $"{campo} like '%{filtro}%'";
+                        break;
+                }
+
+                datos.SetearConsulta(consulta);
+                datos.EjecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    Pokemon aux = new Pokemon();
+                    aux.Id = (int)datos.Lector["Id"];
+                    aux.Numero = (int)datos.Lector["Numero"];
+                    aux.Nombre = (string)datos.Lector["Nombre"];
+                    aux.Descripcion = (string)datos.Lector["Descripcion"];
+                    aux.Activo = (bool)datos.Lector["Activo"];
+
+                    if (!(datos.Lector["UrlImagen"] is DBNull))
+                        aux.UrlImagen = (string)datos.Lector["UrlImagen"];
+
+                    aux.Tipo = new Elemento();
+                    aux.Tipo.Id = (int)datos.Lector["IdTipo"];
+                    aux.Tipo.Descripcion = (string)datos.Lector["Tipo"];
+                    aux.Debilidad = new Elemento();
+                    aux.Debilidad.Id = (int)datos.Lector["IdDebilidad"];
+                    aux.Debilidad.Descripcion = (string)datos.Lector["Debilidad"];
+                    lista.Add(aux);
+                }
+
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public void Agregar(Pokemon nuevo)
         {
             AccesoDatos datos = new AccesoDatos();

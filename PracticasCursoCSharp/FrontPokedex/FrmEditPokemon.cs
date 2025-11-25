@@ -127,7 +127,7 @@ namespace FrontPokedex
             txtImagen.Clear();
             cbTipo.SelectedIndex = -1;
             cbDebilidad.SelectedIndex = -1;
-            picBoxPokemon.Load(HelperImagenes.ObtenerUrlSeleccionada(""));
+            picBoxPokemon.Load(HelperImagenes.ObtenerUrlSeleccionada(null));
         }
 
         private void mensajeFinalizar(string mensaje, bool alta)
@@ -158,13 +158,15 @@ namespace FrontPokedex
 
         private void txtImagen_Leave(object sender, EventArgs e)
         {
+            Pokemon poke = new Pokemon();
+            poke.UrlImagen = txtImagen.Text;
             try
             {
-                picBoxPokemon.Load(HelperImagenes.ObtenerUrlSeleccionada(txtImagen.Text));
+                picBoxPokemon.Load(HelperImagenes.ObtenerUrlSeleccionada(poke));
             }
             catch (Exception ex)
             {
-                picBoxPokemon.Load(HelperImagenes.ObtenerUrlSeleccionada(""));
+                picBoxPokemon.Load(HelperImagenes.ObtenerUrlSeleccionada(null));
                 MessageBox.Show(ex.Message);
             }
         }

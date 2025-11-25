@@ -16,6 +16,7 @@ namespace FrontPokedex
     public partial class FrmPokemons : Form
     {
         private List<Pokemon> listaPokemons;
+
         public FrmPokemons()
         {
             InitializeComponent();
@@ -24,6 +25,7 @@ namespace FrontPokedex
         private void FrmPokemons_Load(object sender, EventArgs e)
         {
             cargarPokemons();
+            cargarCBCampos();
         }
 
         private void cargarPokemons()
@@ -32,8 +34,21 @@ namespace FrontPokedex
             try
             {
                 listaPokemons = negocio.Listar(checkEliminados.Checked);
-                dataGridPokemons.DataSource = listaPokemons;
-                picBoxPokemon.Load(listaPokemons[0].UrlImagen);
+                refrescarListaPokemons(listaPokemons);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
+
+        private void refrescarListaPokemons(List<Pokemon> lista)
+        {
+            try
+            {
+                dataGridPokemons.DataSource = null;
+                dataGridPokemons.DataSource = lista ?? new List<Pokemon>();
+                picBoxPokemon.Load(HelperImagenes.ObtenerUrlSeleccionada(listaPokemons?[0]));
                 quitarColumna("Id");
                 quitarColumna("Activo");
                 pintarInactivos();
@@ -56,11 +71,11 @@ namespace FrontPokedex
             {
                 if (seleccionado != null)
                 {
-                    picBoxPokemon.Load(HelperImagenes.ObtenerUrlSeleccionada(seleccionado.UrlImagen));
+                    picBoxPokemon.Load(HelperImagenes.ObtenerUrlSeleccionada(seleccionado));
                 }
                 else
                 {
-                    picBoxPokemon.Load(HelperImagenes.ObtenerUrlSeleccionada(listaPokemons[0].UrlImagen));
+                    picBoxPokemon.Load(HelperImagenes.ObtenerUrlSeleccionada(listaPokemons?[0]));
 
                 }
             }
@@ -70,6 +85,7 @@ namespace FrontPokedex
                 //picBoxPokemon.Image = null;
             }
         }
+
         private void pintarInactivos()
         {
             try
@@ -134,7 +150,7 @@ namespace FrontPokedex
             cargarPokemons();
         }
 
-        private void validarPokemonActivo (Pokemon seleccionado)
+        private void validarPokemonActivo(Pokemon seleccionado)
         {
             if (seleccionado != null)
             {
@@ -146,7 +162,8 @@ namespace FrontPokedex
                 {
                     cambiarBotonEliminar(false);
                 }
-            } else
+            }
+            else
             {
                 cambiarBotonEliminar(true);
             }
@@ -154,11 +171,12 @@ namespace FrontPokedex
 
         private void cambiarBotonEliminar(bool eliminar)
         {
-           if (eliminar)
+            if (eliminar)
             {
                 btnEliminarLogico.Text = "Eliminar Pokemon (Reversible)";
                 btnEliminarLogico.BackColor = Color.Orange;
-            } else
+            }
+            else
             {
                 btnEliminarLogico.Text = "Reactivar Pokemon";
                 btnEliminarLogico.BackColor = Color.LightGreen;
@@ -170,9 +188,12 @@ namespace FrontPokedex
             Pokemon seleccionado = null;
             try
             {
-                if (dataGridPokemons.CurrentRow != null)
+                if (dataGridPokemons.DataSource != null)
                 {
-                    seleccionado = (Pokemon)dataGridPokemons.CurrentRow.DataBoundItem;
+                    if (dataGridPokemons.CurrentRow != null)
+                    {
+                        seleccionado = (Pokemon)dataGridPokemons.CurrentRow.DataBoundItem;
+                    }
                 }
             }
             catch (Exception ex)
@@ -238,7 +259,7 @@ namespace FrontPokedex
                         PokemonNegocio negocio = new PokemonNegocio();
                         negocio.EliminarLogico(seleccionado);
                     }
-                }                
+                }
             }
             catch (Exception ex)
             {
@@ -250,6 +271,172 @@ namespace FrontPokedex
         private void checkEliminados_CheckedChanged(object sender, EventArgs e)
         {
             cargarPokemons();
+            if (!String.IsNullOrEmpty(txtFiltroRapido.Text))
+            {
+                filtroRapido();
+            }
+            if (!String.IsNullOrWhiteSpace(txtFiltroAvanzado.Text) && cbCriterios.SelectedIndex >= 0)
+            {
+                filtroAvanzado();
+            } else
+            {
+                cargarPokemons();
+            }
+        }
+
+        private void btnFiltro_Click(object sender, EventArgs e)
+        {
+            filtroAvanzado();
+        }
+
+        private string validarFiltro(string filtro)
+        {
+            if (cbCampos.SelectedIndex < 0)
+            {
+                return "Seleccione un campo para filtrar.";
+            }
+            if (cbCriterios.SelectedIndex < 0)
+            {
+                return "Seleccione un criterio para filtrar.";
+            }
+            if (String.IsNullOrEmpty(filtro))
+            {
+                return "Ingrese un valor para filtrar";
+            }
+            int numero = int.MinValue;
+            if (cbCampos.SelectedIndex == 0) //Número
+            {
+                if (!int.TryParse(filtro, out numero))
+                {
+                    return "El valor ingresado debe ser numérico.";
+                }
+                if (numero == int.MinValue)
+                {
+                    return "Ingrese un número para filtrar.";
+                }
+            }
+            return "";
+        }
+        private void filtroAvanzado()
+        {
+            PokemonNegocio pokemonNegocio = new PokemonNegocio();
+            string filtro = txtFiltroAvanzado.Text;
+            string error = validarFiltro(filtro);
+            if (!String.IsNullOrEmpty(error))
+            {
+                MessageBox.Show(error);
+                return;
+            }
+            try
+            {
+                string campo = cbCampos.SelectedItem.ToString();
+                string criterio = cbCriterios.SelectedItem.ToString();
+                listaPokemons = pokemonNegocio.Filtrar(campo, criterio, filtro, checkEliminados.Checked);
+                refrescarListaPokemons(listaPokemons);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
+
+        private void filtroRapido()
+        {
+            List<Pokemon> listaFiltrada;
+            string filtro = txtFiltroRapido.Text;
+            try
+            {
+                if (!String.IsNullOrEmpty(filtro))
+                {
+                    listaFiltrada = listaPokemons.FindAll(p => p.Nombre.ToUpper().Contains(filtro.ToUpper()) || p.Descripcion.ToUpper().Contains(filtro.ToUpper())
+                                                            && (p.Activo == checkEliminados.Checked || p.Activo));
+                }
+                else
+                {
+                    listaFiltrada = listaPokemons;
+                }
+                refrescarListaPokemons(listaFiltrada);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+
+        }
+
+        private void txtFiltroRapido_TextChanged(object sender, EventArgs e)
+        {
+            if (txtFiltroRapido.Text.Length > 2 || txtFiltroRapido.Text.Length == 0)
+                filtroRapido();
+        }
+
+        private void cargarCBCampos()
+        {
+            cbCampos.Items.Add("Numero");
+            cbCampos.Items.Add("Nombre");
+            cbCampos.Items.Add("Descripcion");
+            cbCampos.Items.Add("Tipo");
+            cbCampos.Items.Add("Debilidad");
+            cbCampos.SelectedIndex = -1;
+        }
+
+        private void cargarCBCriterios(int indexCampos = -1)
+        {
+            try
+            {
+                cbCriterios.Enabled = indexCampos >= 0;
+                switch (indexCampos)
+                {
+                    case -1:
+                        cbCriterios.Items.Clear();
+                        break;
+                    case 0: //Número
+                        cbCriterios.Items.Clear();
+                        cbCriterios.Items.Add("Mayor a");
+                        cbCriterios.Items.Add("Menor a");
+                        cbCriterios.Items.Add("Igual a");
+                        break;
+                    default:
+                        cbCriterios.Items.Clear();
+                        cbCriterios.Items.Add("Contiene");
+                        cbCriterios.Items.Add("Comienza con");
+                        cbCriterios.Items.Add("Termina con");
+                        break;
+                }
+                if (indexCampos >= 0)
+                {
+                    cbCriterios.SelectedIndex = -1;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+
+        }
+
+        private void cbCampos_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int indice = cbCampos.Items.Count > 0 ? cbCampos.SelectedIndex : -1;
+            cargarCBCriterios(indice);
+        }
+
+        private void cbCriterios_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                bool filtro = false;
+                if (cbCriterios.Items.Count > 0)
+                {
+                    filtro = cbCriterios.SelectedIndex >= 0;
+                }
+                btnFiltro.Enabled = filtro;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+
+            }
         }
     }
 }
