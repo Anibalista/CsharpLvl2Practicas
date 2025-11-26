@@ -1,13 +1,7 @@
 ﻿using DominioPokedex;
 using NegocioPokedex;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using System.Windows.Forms;
 
 namespace FrontPokedex
@@ -89,6 +83,7 @@ namespace FrontPokedex
                 MessageBox.Show("Por favor, complete los siguientes campos obligatorios:\n" + mensaje, "Campos obligatorios", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
             if (Pokemon == null)
                 Pokemon = new Pokemon();
             PokemonNegocio negocio = new PokemonNegocio();
@@ -97,6 +92,7 @@ namespace FrontPokedex
                 Pokemon.Numero = int.Parse(txtNumero.Text);
                 Pokemon.Nombre = txtNombre.Text;
                 Pokemon.Descripcion = txtDescripcion.Text;
+                copiarImagen(txtImagen.Text);
                 Pokemon.UrlImagen = String.IsNullOrWhiteSpace(txtImagen.Text) ? "" : txtImagen.Text;
                 Pokemon.Tipo = (Elemento)cbTipo.SelectedItem;
                 Pokemon.Debilidad = (Elemento)cbDebilidad.SelectedItem;
@@ -128,6 +124,25 @@ namespace FrontPokedex
             cbTipo.SelectedIndex = -1;
             cbDebilidad.SelectedIndex = -1;
             picBoxPokemon.Load(HelperImagenes.ObtenerUrlSeleccionada(null));
+        }
+
+        private void copiarImagen(string url)
+        {
+            if (string.IsNullOrWhiteSpace(url))
+                return;
+            if (!Path.IsPathRooted(url))
+                return;
+            string nombre = string.Empty;
+            try
+            {
+                nombre = txtNumero.Text + "_" + txtNombre.Text + System.IO.Path.GetExtension(url);
+                nombre = HelperImagenes.CopiarImagenSeleccionada(url, nombre);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("No se pudo copiar la imagen: " + ex.Message);
+            }
+            txtImagen.Text = nombre;
         }
 
         private void mensajeFinalizar(string mensaje, bool alta)
@@ -169,6 +184,32 @@ namespace FrontPokedex
                 picBoxPokemon.Load(HelperImagenes.ObtenerUrlSeleccionada(null));
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void btnAgregarImagen_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string ruta = "";
+                ruta = HelperImagenes.SeleccionarImagen();
+                txtImagen.Text = ruta;
+                picBoxPokemon.Load(HelperImagenes.ObtenerUrlSeleccionada(new Pokemon { UrlImagen = ruta }));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+        }
+
+        private void btnElemento_Click(object sender, EventArgs e)
+        {
+            DialogResult pregunta = MessageBox.Show("¿Desea agregar un nuevo elemento o modificar uno existente?", "Elementos", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (pregunta == DialogResult.No)
+                return;
+            FrmElementos formulario = new FrmElementos();
+            formulario.ShowDialog();
+            cargarElementos();
         }
     }
 }

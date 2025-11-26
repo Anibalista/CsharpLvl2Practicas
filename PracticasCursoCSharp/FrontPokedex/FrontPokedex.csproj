@@ -34,6 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -52,6 +53,12 @@
     <Compile Include="FrmEditPokemon.Designer.cs">
       <DependentUpon>FrmEditPokemon.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmElementos.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmElementos.Designer.cs">
+      <DependentUpon>FrmElementos.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmPokemons.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -63,6 +70,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FrmEditPokemon.resx">
       <DependentUpon>FrmEditPokemon.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmElementos.resx">
+      <DependentUpon>FrmElementos.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmPokemons.resx">
       <DependentUpon>FrmPokemons.cs</DependentUpon>

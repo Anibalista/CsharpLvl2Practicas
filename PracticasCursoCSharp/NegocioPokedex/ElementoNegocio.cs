@@ -35,5 +35,42 @@ namespace NegocioPokedex
                 datos.CerrarConexion();
             }
         }
+
+        public void agregar(Elemento nuevo)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetearConsulta($"Insert into ELEMENTOS (Descripcion) values ('{nuevo}')");
+                datos.EjecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        public void modificar(Elemento elemento)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetearConsulta($"Update ELEMENTOS set Descripcion = {elemento.Descripcion} where Id = {elemento.Id}");
+                datos.EjecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
     }
 }
