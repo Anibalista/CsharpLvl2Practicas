@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +17,9 @@ namespace FrontPokedex
     {
         private List<Elemento> listaDeElementos;
         private bool cerrarFormulario = false;
+        private bool cargando = true;
         Elemento elemento;
+        TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
         public FrmElementos()
         {
             InitializeComponent();
@@ -43,12 +46,15 @@ namespace FrontPokedex
         private void cargarElementos()
         {
             ElementoNegocio negocio = new ElementoNegocio();
+            cargando = true;
             try
             {
                 listaDeElementos = negocio.listar();
                 listaElementos.DataSource = listaDeElementos;
                 listaElementos.ValueMember = "Id";
                 listaElementos.DisplayMember = "Descripcion";
+                listaElementos.SelectedIndex = -1;
+                cargando = false;
             }
             catch (Exception ex)
             {
@@ -69,6 +75,10 @@ namespace FrontPokedex
         private void limpiarFormulario()
         {
             txtElemento.Clear();
+            lblSeleccionado.Text = "";
+            elemento = null;
+            txtFiltro.Clear();
+            cargarElementos();
             txtElemento.Focus();
         }
 
@@ -81,7 +91,6 @@ namespace FrontPokedex
                     return false;
                 }
                 elemento = (Elemento)listaElementos.SelectedItem;
-                txtElemento.Text = elemento.Descripcion;
                 return true;
             }
             catch
@@ -94,7 +103,8 @@ namespace FrontPokedex
         private void filtrarElementos()
         {
             List<Elemento> listaFiltrada;
-            string filtro = txtElemento.Text.ToLower();
+            cargando = true;
+            string filtro = txtFiltro.Text.ToLower();
             try
             {
                 listaFiltrada = listaDeElementos.FindAll(e => e.Descripcion.ToLower().Contains(filtro));
@@ -102,6 +112,7 @@ namespace FrontPokedex
                 listaElementos.DataSource = listaFiltrada;
                 listaElementos.ValueMember = "Id";
                 listaElementos.DisplayMember = "Descripcion";
+                cargando = false;
             }
             catch
             {
@@ -117,29 +128,47 @@ namespace FrontPokedex
         }
 
         //eventos
-        private void txtElemento_TextChanged(object sender, EventArgs e)
+        private void btnCancelar_Click(object sender, EventArgs e)
         {
-            if (cerrarFormulario)
-                return;
-            string filtro = txtElemento.Text;
-            if (filtro.Length > 0 && filtro.Length < 3)
+            cerrar();
+        }
+
+        private void txtFiltro_TextChanged(object sender, EventArgs e)
+        {
+            string filtro = txtFiltro.Text;
+            if (String.IsNullOrWhiteSpace(filtro))
+                cargarElementos();
+            if (filtro.Length < 3)
                 return;
             try
             {
-                if (string.IsNullOrWhiteSpace(filtro))
-                {
-                    cargarElementos();
-                }
-                else
-                {
-                    filtrarElementos();
-                }
+                filtrarElementos();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+        }
 
+        private void listaElementos_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cerrarFormulario)
+                return;
+            if (cargando)
+                return;
+            try
+            {
+                if (!validarSeleccion())
+                {
+                    lblSeleccionado.Text = "";
+                    elemento = null;
+                    return;
+                }
+                lblSeleccionado.Text = elemento.Descripcion;
+            } catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void btnCargar_Click(object sender, EventArgs e)
@@ -147,55 +176,31 @@ namespace FrontPokedex
             if (!validarElemento())
                 return;
             string descripcion = txtElemento.Text.Trim();
+            if (descripcion.Length < 3)
+            {
+                MessageBox.Show("La descripción debe tener al menos 3 caracteres.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             try
             {
                 if (elementoExistente(descripcion))
                 {
-                    MessageBox.Show("El elemento ya existe en la lista.");
+                    MessageBox.Show("El elemento ya existe en la lista.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
                 Elemento nuevoElemento = new Elemento();
-                nuevoElemento.Descripcion = descripcion;
+                nuevoElemento.Descripcion = textInfo.ToTitleCase(descripcion.ToLower());
                 ElementoNegocio negocio = new ElementoNegocio();
                 negocio.agregar(nuevoElemento);
-                MessageBox.Show("Elemento agregado correctamente.");
-                DialogResult result = MessageBox.Show("¿Desea agregar otro elemento?", "Agregar otro", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (result == DialogResult.Yes)
-                {
-                    limpiarFormulario();
-                    cargarElementos();
-                    return;
-                }
-            } catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            cerrar();
-        }
-
-        private void btnModificar_Click(object sender, EventArgs e)
-        {
-            if (!validarElemento())
-                return;
-            string descripcion = txtElemento.Text.Trim();
-            try
-            {
-                if (!elementoExistente(descripcion))
-                {
-                    MessageBox.Show("El elemento NO existe! Cargue uno nuevo.");
-                    return;
-                }
-
-                ElementoNegocio negocio = new ElementoNegocio();
-                negocio.modificar(elemento);
-                DialogResult res = MessageBox.Show("Elemento modificado correctamente. ¿Desea modificar otro elemento?", "Modificar otro", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                DialogResult res = MessageBox.Show("Elemento agregado correctamente.\n¿Desea agregar otro elemento?", "Éxito", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                 if (res == DialogResult.Yes)
                 {
                     limpiarFormulario();
-                    cargarElementos();
-                    return;
                 }
-                cerrar();
+                else
+                {
+                    cerrar();
+                }
             }
             catch (Exception ex)
             {
@@ -203,26 +208,39 @@ namespace FrontPokedex
             }
         }
 
-        private void btnCancelar_Click(object sender, EventArgs e)
+        private void btnModificar_Click(object sender, EventArgs e)
         {
-            cerrar();
-        }
-
-        private void listaElementos_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (cerrarFormulario)
+            if (!validarElemento())
                 return;
+            string descripcion = txtElemento.Text.Trim();
+            if (descripcion.Length < 3)
+            {
+                MessageBox.Show("La descripción debe tener al menos 3 caracteres.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             try
             {
-                if (!validarSeleccion())
+                if (elementoExistente(descripcion))
                 {
-                    elemento = null;
+                    MessageBox.Show("El elemento ya existe en la lista (No tiene modificaciones).", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-                else
+                string descripcionNueva = textInfo.ToTitleCase(descripcion.ToLower());
+                DialogResult confirmar = MessageBox.Show($"¿Confirma modificar el elemento '{elemento.Descripcion}' por '{descripcionNueva}'?", "Confirmar modificación", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (confirmar == DialogResult.No)
+                    return;
+                elemento.Descripcion = descripcionNueva;
+                ElementoNegocio negocio = new ElementoNegocio();
+                negocio.modificar(elemento);
+                DialogResult res = MessageBox.Show("Elemento modificado correctamente.\n¿Desea modificar o cargar otro elemento?", "Éxito", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                if (res == DialogResult.Yes)
                 {
-                    txtElemento.Text = elemento.Descripcion;
+                    limpiarFormulario();
+                } else
+                {
+                    cerrar();
                 }
+                
             }
             catch (Exception ex)
             {

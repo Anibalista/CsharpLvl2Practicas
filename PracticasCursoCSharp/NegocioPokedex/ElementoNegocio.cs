@@ -59,7 +59,7 @@ namespace NegocioPokedex
             AccesoDatos datos = new AccesoDatos();
             try
             {
-                datos.SetearConsulta($"Update ELEMENTOS set Descripcion = {elemento.Descripcion} where Id = {elemento.Id}");
+                datos.SetearConsulta($"Update ELEMENTOS set Descripcion = '{elemento.Descripcion}' where Id = {elemento.Id}");
                 datos.EjecutarAccion();
             }
             catch (Exception ex)
